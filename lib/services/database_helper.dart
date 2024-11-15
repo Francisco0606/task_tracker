@@ -71,6 +71,25 @@ class DatabaseHelper {
     return maps.isNotEmpty; // If maps are not empty, the email exists
   }
 
+  // Method to check if the provided username/email and password are correct
+  Future<int?> validateUserLogin(
+      String usernameOrEmail, String password) async {
+    Database db = await database;
+
+    // Query by username or email
+    List<Map<String, dynamic>> maps = await db.query(
+      'users',
+      where: '(username = ? OR email = ?) AND password = ?',
+      whereArgs: [usernameOrEmail, usernameOrEmail, password],
+    );
+
+    if (maps.isNotEmpty) {
+      return maps.first['user_id']; // Return the user_id if a match is found
+    }
+
+    return null; // Return null if no match is found
+  }
+
   // Get all users from the database
   Future<List<User>> getUsers() async {
     Database db = await database;
