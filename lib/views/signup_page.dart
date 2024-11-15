@@ -29,6 +29,22 @@ class _SignupPageState extends State<SignupPage> {
       final username = _usernameController.text;
       final password = _passwordController.text;
 
+      bool emailExists = await _databaseHelper.doesEmailExist(email);
+      bool usernameExists = await _databaseHelper.doesUsernameExist(username);
+
+      if (emailExists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('The email is already taken')),
+        );
+        return;
+      }
+
+      if (usernameExists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('The username is already taken')),
+        );
+        return;
+      }
       User newUser = User(
         name: name,
         username: username,
@@ -37,12 +53,12 @@ class _SignupPageState extends State<SignupPage> {
       );
 
       try {
-        await _databaseHelper.insertUser(newUser);
+        int userId = await _databaseHelper.insertUser(newUser);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User created successfully!')),
         );
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => MainPage()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => MainPage(userId: userId)));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

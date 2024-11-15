@@ -37,15 +37,38 @@ class DatabaseHelper {
     );
   }
 
-  // Insert a user into the database
-  Future<void> insertUser(User user) async {
+  // Insert a user into the database and return the user_id
+  Future<int> insertUser(User user) async {
     Database db = await database;
-    await db.insert(
+    // Insert the user and get the user_id of the inserted row
+    int userId = await db.insert(
       'users',
       user.toMap(),
-      conflictAlgorithm: ConflictAlgorithm
-          .replace, // Handle conflicts (e.g., duplicate usernames)
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    return userId; // Return the inserted user's ID
+  }
+
+  // Method to check if a username already exists in the database
+  Future<bool> doesUsernameExist(String username) async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'users',
+      where: 'username = ?',
+      whereArgs: [username],
+    );
+    return maps.isNotEmpty; // If maps are not empty, the username exists
+  }
+
+  // Method to check if an email already exists in the database
+  Future<bool> doesEmailExist(String email) async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'users',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    return maps.isNotEmpty; // If maps are not empty, the email exists
   }
 
   // Get all users from the database
@@ -55,19 +78,5 @@ class DatabaseHelper {
     return List.generate(maps.length, (i) {
       return User.fromMap(maps[i]);
     });
-  }
-
-  // Get a user by username
-  Future<User?> getUserByUsername(String username) async {
-    Database db = await database;
-    List<Map<String, dynamic>> maps = await db.query(
-      'users',
-      where: 'username = ?',
-      whereArgs: [username],
-    );
-    if (maps.isNotEmpty) {
-      return User.fromMap(maps.first);
-    }
-    return null;
   }
 }

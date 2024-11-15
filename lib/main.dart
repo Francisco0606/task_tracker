@@ -35,9 +35,10 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _navigateToMainPage() {
+    int userId = 1;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const MainPage()),
+      MaterialPageRoute(builder: (context) => MainPage(userId: userId)),
     );
   }
 

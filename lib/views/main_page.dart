@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'create_page.dart';
 
 class MainPage extends StatelessWidget {
-  const MainPage({super.key});
+  const MainPage({super.key, required this.userId});
+  final int userId;
 
   @override
   Widget build(BuildContext context) {
@@ -10,9 +11,9 @@ class MainPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Main Page'),
       ),
-      body: const Center(
+      body: Center(
         child: Text(
-          'Welcome to the Main Page!',
+          'Welcome $userId',
           style: TextStyle(fontSize: 24),
         ),
       ),
