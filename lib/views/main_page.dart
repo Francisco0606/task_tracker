@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'create_page.dart'; // Import CreatePage
+import 'create_page.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -24,7 +24,9 @@ class MainPage extends StatelessWidget {
           );
         },
         tooltip: 'Create',
-        child: const Icon(Icons.add), // "+" icon
+        child: const Icon(
+          Icons.add,
+        ), // "+" icon
       ),
     );
   }

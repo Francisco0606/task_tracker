@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'views/main_page.dart'; // Updated import for main_page.dart
+import 'package:task_tracker/views/forgot_pass_page.dart';
+import 'package:task_tracker/views/signup_page.dart';
+import 'views/main_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,23 +41,19 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // void _login() {
-  //   // Placeholder for login action
-  //   final username = _usernameController.text;
-  //   final password = _passwordController.text;
+  void _navigateToSignupPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SignupPage()),
+    );
+  }
 
-  //   // Simple validation (for demonstration purposes)
-  //   if (username.isNotEmpty && password.isNotEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Welcome, $username!')),
-  //     );
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //           content: Text('Please enter both username and password.')),
-  //     );
-  //   }
-  // }
+  void _navigateToForgotPassPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ForgotPassPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,18 +63,20 @@ class _LoginPageState extends State<LoginPage> {
         title: const Text('Login Page'),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 400, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Username input
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
-                labelText: 'Eamil',
+                labelText: 'Email/Username',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
+            // Password input
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(
@@ -86,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true,
             ),
             const SizedBox(height: 24),
+            // Login button
             ElevatedButton(
               onPressed: _navigateToMainPage,
               style: ElevatedButton.styleFrom(
@@ -94,6 +95,26 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: const Text('Log In'),
             ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            ElevatedButton(
+              onPressed: _navigateToSignupPage,
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              ),
+              child: const Text('Sign Up'),
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            TextButton(
+                onPressed: _navigateToForgotPassPage,
+                child: Text(
+                  'Forgot Password?',
+                  style: TextStyle(color: Colors.blue[700]),
+                ))
           ],
         ),
       ),
