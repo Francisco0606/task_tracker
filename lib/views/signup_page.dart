@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracker/models/users.dart';
+import 'package:task_tracker/services/database_helper.dart';
+import 'package:task_tracker/views/main_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -8,7 +11,6 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  // TextEditingControllers for each field
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
@@ -16,17 +18,37 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  // Form key for validation
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  // Method to validate and submit form
-  void _submitForm() {
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // If the form is valid, you can proceed with the submission
       final name = _nameController.text;
       final email = _emailController.text;
       final username = _usernameController.text;
       final password = _passwordController.text;
+
+      User newUser = User(
+        name: name,
+        username: username,
+        password: password,
+        email: email,
+      );
+
+      try {
+        await _databaseHelper.insertUser(newUser);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User created successfully!')),
+        );
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (_) => MainPage()));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Error creating user. Please try again.')),
+        );
+      }
     }
   }
 
@@ -35,13 +57,21 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Signup Page'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey, // Assigning the form key
+          key: _formKey,
           child: ListView(
             children: <Widget>[
+              const SizedBox(height: 20),
+              const Text(
+                'All fields are required. Please fill them out.',
+                style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12.0),
+
               // Name TextField
               TextFormField(
                 controller: _nameController,

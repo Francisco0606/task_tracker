@@ -1,7 +1,6 @@
-import 'dart:async';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:task_tracker/models/users.dart';
-import 'package:path/path.dart';
 
 class DatabaseHelper {
   static Database? _database;
@@ -18,7 +17,7 @@ class DatabaseHelper {
   // Initialize the database
   Future<Database> _initDatabase() async {
     // Get the path to the database file
-    String path = join(await getDatabasesPath(), 'taskDtb.db');
+    String path = join(await getDatabasesPath(), 'task.db');
 
     // Open the database and create the table if it doesn't exist
     return openDatabase(
@@ -27,6 +26,7 @@ class DatabaseHelper {
         return db.execute(
           '''CREATE TABLE users(
             user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+            name TEXT,
             username TEXT, 
             password TEXT, 
             email TEXT
@@ -37,10 +37,15 @@ class DatabaseHelper {
     );
   }
 
-  // Insert a new user into the database
-  Future<int> insertUser(User user) async {
+  // Insert a user into the database
+  Future<void> insertUser(User user) async {
     Database db = await database;
-    return await db.insert('users', user.toMap());
+    await db.insert(
+      'users',
+      user.toMap(),
+      conflictAlgorithm: ConflictAlgorithm
+          .replace, // Handle conflicts (e.g., duplicate usernames)
+    );
   }
 
   // Get all users from the database
@@ -64,26 +69,5 @@ class DatabaseHelper {
       return User.fromMap(maps.first);
     }
     return null;
-  }
-
-  // Update an existing user
-  Future<int> updateUser(User user) async {
-    Database db = await database;
-    return await db.update(
-      'users',
-      user.toMap(),
-      where: 'user_id = ?',
-      whereArgs: [user.user_id],
-    );
-  }
-
-  // Delete a user
-  Future<int> deleteUser(int userId) async {
-    Database db = await database;
-    return await db.delete(
-      'users',
-      where: 'user_id = ?',
-      whereArgs: [userId],
-    );
   }
 }
